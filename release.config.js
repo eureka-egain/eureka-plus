@@ -3,7 +3,20 @@ module.exports = {
     tagFormat: "1.51.0-${version}",
     plugins: [
         "@semantic-release/commit-analyzer", // Analyzes commits to determine version bump
-        "@semantic-release/release-notes-generator", // Generates release notes
+        [
+            "@semantic-release/release-notes-generator",
+            {
+                writerOpts: {
+                    // Custom release notes template
+                    mainTemplate: `
+                        # Release Notes for Version {{version}}
+
+                        ## Custom Message
+                        This is the release note message for version {{version}}.
+                    `,
+                },
+            },
+        ],
         "@semantic-release/changelog", // Updates the CHANGELOG.md file
         [
             "@semantic-release/exec",

@@ -1,4 +1,3 @@
-
 module.exports = {
     branches: ["eureka-main"], // The branch you release from
     tagFormat: "1.51.0-${version}",

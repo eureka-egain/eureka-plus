@@ -31,6 +31,11 @@ export class HarBackend {
   private _zipFile: ZipFile | null;
   private _baseDir: string | null;
 
+  /**
+   * MOD: Stores returned entries so as to help skip already returned entries
+   */
+  private _returnedEntries = new Set<har.Entry>();
+
   constructor(harFile: har.HARFile, baseDir: string | null, zipFile: ZipFile | null) {
     this.id = createGuid();
     this._harFile = harFile;
@@ -87,14 +92,31 @@ export class HarBackend {
     return buffer;
   }
 
+  // MOD: Helper function to normalize URLs by removing the timestamp parameters like `_dc` parameter
+  private normalizeUrl = (inputUrl: string): string => {
+    const urlObj = new URL(inputUrl);
+    urlObj.searchParams.delete('_dc'); // Remove the `_dc` parameter
+    return urlObj.toString();
+  };
+
   private async _harFindResponse(url: string, method: string, headers: HeadersArray, postData: Buffer | undefined): Promise<har.Entry | undefined> {
     const harLog = this._harFile.log;
     const visited = new Set<har.Entry>();
     while (true) {
       const entries: har.Entry[] = [];
       for (const candidate of harLog.entries) {
+        candidate.request.url = this.normalizeUrl(candidate.request.url); // Normalize the URL
+        url = this.normalizeUrl(url); // Normalize the URL
+
         if (candidate.request.url !== url || candidate.request.method !== method)
           continue;
+
+        /**
+         * MOD: Skip already returned entries
+         */
+        if (this._returnedEntries.has(candidate))
+          continue;
+
         if (method === 'POST' && postData && candidate.request.postData) {
           const buffer = await this._loadContent(candidate.request.postData);
           if (!buffer.equals(postData)) {
@@ -145,6 +167,11 @@ export class HarBackend {
         }
         continue;
       }
+
+      /**
+       * MOD: Mark entry as returned so as to skip it next time
+       */
+      this._returnedEntries.add(entry);
 
       return entry;
     }

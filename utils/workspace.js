@@ -117,11 +117,40 @@ class Workspace {
         pkg.packageJSON.license = workspacePackageJSON.license;
       }
 
+      // MOD: modify paths to packages as per eureka structure
+      const versionFromParams = process.argv[3];
       for (const otherPackage of this._packages) {
-        if (pkg.packageJSON.dependencies && pkg.packageJSON.dependencies[otherPackage.name])
-          pkg.packageJSON.dependencies[otherPackage.name] = version;
-        if (pkg.packageJSON.devDependencies && pkg.packageJSON.devDependencies[otherPackage.name])
-          pkg.packageJSON.devDependencies[otherPackage.name] = version;
+        if (
+          pkg.packageJSON.dependencies &&
+          pkg.packageJSON.dependencies[otherPackage.name]
+        ) {
+          switch (otherPackage.name) {
+            case "playwright":
+              pkg.packageJSON.dependencies[otherPackage.name] = `https://github.com/eureka-egain/eureka-plus/releases/download/${versionFromParams}/pw.tgz`;
+              break;
+            case "playwright-core":
+              pkg.packageJSON.dependencies[otherPackage.name] = `https://github.com/eureka-egain/eureka-plus/releases/download/${versionFromParams}/pw-core.tgz`;
+              break;
+            default:
+              pkg.packageJSON.dependencies[otherPackage.name] = version;
+          }
+        }
+
+        if (
+          pkg.packageJSON.devDependencies &&
+          pkg.packageJSON.devDependencies[otherPackage.name]
+        ) {
+          switch (otherPackage.name) {
+            case "playwright":
+              pkg.packageJSON.devDependencies[otherPackage.name] = `https://github.com/eureka-egain/eureka-plus/releases/download/${versionFromParams}/pw.tgz`;
+              break;
+            case "playwright-core":
+              pkg.packageJSON.devDependencies[otherPackage.name] = `https://github.com/eureka-egain/eureka-plus/releases/download/${versionFromParams}/pw-core.tgz`;
+              break;
+            default:
+              pkg.packageJSON.devDependencies[otherPackage.name] = version;
+          }
+        }
       }
       await maybeWriteJSON(pkg.packageJSONPath, pkg.packageJSON);
     }
@@ -222,7 +251,7 @@ const workspace = new Workspace(ROOT_PATH, [
 if (require.main === module) {
   parseCLI();
 } else {
-  module.exports = {workspace};
+  module.exports = { workspace };
 }
 
 function die(message, exitCode = 1) {
@@ -237,7 +266,7 @@ async function parseCLI() {
       if (hasChanges)
         die(`\n  ERROR: workspace is inconsistent! Run '//utils/workspace.js --ensure-consistent' and commit changes!`);
       // Ensure lockfileVersion is 3
-      const packageLock = require(ROOT_PATH +  '/package-lock.json');
+      const packageLock = require(ROOT_PATH + '/package-lock.json');
       if (packageLock.lockfileVersion !== 3)
         die(`\n  ERROR: package-lock.json lockfileVersion must be 3`);
     },

@@ -85,7 +85,7 @@ class Workspace {
       if (JSON.stringify(json) === JSON.stringify(oldJson))
         return;
       hasChanges = true;
-      console.warn('Updated', jsonPath);
+      console.log('Updated', jsonPath);
       await writeJSON(jsonPath, json);
     };
 
@@ -155,8 +155,9 @@ class Workspace {
       await maybeWriteJSON(pkg.packageJSONPath, pkg.packageJSON);
     }
 
-    // Re-run npm i to make package-lock dirty.
-    child_process.execSync('npm i');
+    // Re-run npm i to make package-lock dirty. 
+    // MOD: commented out to avoid running npm i since the dependencies are not published yet
+    // child_process.execSync('npm i');
     return hasChanges;
   }
 }

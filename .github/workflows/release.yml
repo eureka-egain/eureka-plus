@@ -28,4 +28,4 @@ jobs:
       - name: Run semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_ACCESS_TOKEN }}
-        run: npx semantic-release --branches eureka-main
+        run: npx semantic-release

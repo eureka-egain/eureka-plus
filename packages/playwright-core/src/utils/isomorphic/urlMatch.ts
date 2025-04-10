@@ -103,8 +103,21 @@ export function urlMatches(baseURL: string | undefined, urlString: string, match
       baseURL = baseURL.replace(/^http/, 'ws');
     match = constructURLBasedOnBaseURL(baseURL, match);
   }
-  if (isString(match))
-    match = globToRegex(match);
+
+  /**
+   * MOD:
+   * Remove support for GLOB patterns and only directly support
+   * regExp
+   */
+  if (isString(match)) {
+    try {
+      match = new RegExp(match);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Invalid regular expression: ' + match);
+      return false; // Explicitly return false for invalid regular expressions
+    }
+  }
   if (isRegExp(match))
     return match.test(urlString);
   const url = parseURL(urlString);

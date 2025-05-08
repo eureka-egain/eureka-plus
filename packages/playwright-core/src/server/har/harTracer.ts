@@ -275,6 +275,8 @@ export class HarTracer {
       if (fromEntry)
         fromEntry.response.redirectURL = request.url();
     }
+    // Store the resource type for filtering
+    (harEntry as any)._resourceType = request.resourceType();
     (request as any)[this._entrySymbol] = harEntry;
     assert(this._started);
     this._delegate.onEntryStarted(harEntry);

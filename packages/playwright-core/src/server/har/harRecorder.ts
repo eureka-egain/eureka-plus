@@ -57,7 +57,11 @@ export class HarRecorder implements HarTracerDelegate {
   }
 
   onEntryStarted(entry: har.Entry) {
-    this._entries.push(entry);
+    // Only store Fetch/XHR requests
+    const resourceType = (entry as any)._resourceType;
+    if (resourceType === 'fetch' || resourceType === 'xhr')
+      this._entries.push(entry);
+
   }
 
   onEntryFinished(entry: har.Entry) {

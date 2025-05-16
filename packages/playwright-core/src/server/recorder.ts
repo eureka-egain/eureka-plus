@@ -80,7 +80,7 @@ export class Recorder implements InstrumentationListener, IRecorder {
   }
 
   constructor(context: BrowserContext, params: channels.BrowserContextEnableRecorderParams) {
-    this._mode = 'standby';
+    this._mode = params.mode || 'none';
     this.handleSIGINT = params.handleSIGINT;
     this._contextRecorder = new ContextRecorder(context, params, {});
     this._context = context;

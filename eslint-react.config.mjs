@@ -59,7 +59,7 @@ const ignores = [
 
 export default [
   { ignores },
-  { 
+  {
     plugins,
     settings: {
       react: { version: 'detect' },
@@ -89,7 +89,6 @@ function packageSection(packageName) {
     },
     rules: {
       ...baseRules,
-      'no-console': 2,
     }
   };
 }

@@ -227,7 +227,6 @@ export default [{
   files: ['packages/**/*.ts'],
   languageOptions: languageOptionsWithTsConfig,
   rules: {
-    'no-console': 2,
     'no-restricted-properties': [2, {
       'object': 'process',
       'property': 'exit',
@@ -249,9 +248,6 @@ export default [{
 }, {
   files: ['packages/playwright/src/reporters/**/*.ts'],
   languageOptions: languageOptionsWithTsConfig,
-  rules: {
-    'no-console': 'off'
-  }
 }, {
   files: [
     'packages/playwright-core/src/server/injected/**/*.ts',

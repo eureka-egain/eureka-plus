@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* eslint-disable no-console */
 
 import fs from 'fs';
 import os from 'os';
